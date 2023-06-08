@@ -1,0 +1,35 @@
+namespace: postgres
+image_p:
+  repository: postgres:14.5
+image_pa:
+  repository: dpage/pgadmin4
+deployment_p:
+  replicaCount: 1
+  terminationGracePeriodSeconds: 10
+deployment_pa:
+  replicaCount: 1
+  containerPort: 5050
+service_p:
+  protocol: TCP
+  port: 5432
+  targetPort: 5432
+service_pa:
+  protocol: TCP
+  port: 5050
+  targetPort: 5050
+secret:
+  type: Opaque
+ingress:
+  enabled: true
+  # Used to create an Ingress record.
+  host: pgadmin.lemmy.example
+  port: 5050
+tls:
+  # ssl-cert-production / ssl-cert-staging
+  secretName: ssl-cert-staging
+  # letsencrypt-production / letsencrypt-staging
+  issuerName: letsencrypt-staging
+pvc:
+  storage: 16Gi
+  storage_pa: 1Gi
+  storageClassName: local

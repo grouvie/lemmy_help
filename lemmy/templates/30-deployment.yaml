@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  replicas: {{ .Values.deployment.replicaCount }}
+  serviceName: {{ .Release.Name }}-service
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      terminationGracePeriodSeconds: {{ .Values.deployment.terminationGracePeriodSeconds }}
+      containers:
+        - name: {{ .Release.Name }}
+          image: {{ .Values.image.repository }}
+          securityContext:
+            runAsUser: 0
+          ports:
+            - containerPort: {{ .Values.service.port }}
+              name: {{ .Release.Name }}-port
+          env:
+          - name: RUST_BACKTRACE
+            value: {{ .Values.deployment.env.rust_backtrace | quote }}
+          volumeMounts:
+          - name: {{ .Release.Name }}-data
+            mountPath: "/config"
+      volumes:
+        - name: {{ .Release.Name }}-data
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-pvc

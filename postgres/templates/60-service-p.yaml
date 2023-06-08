@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-service-p
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Release.Name }}-p
+spec:
+  ports:
+  - port: {{ .Values.service_p.port }}
+    name: {{ .Release.Name }}-port
+  clusterIP: None
+  selector:
+      app: {{ .Release.Name }}-p

@@ -1,0 +1,36 @@
+namespace: lemmy
+image:
+  repository: dessalines/lemmy:0.17.3
+image_ui:
+  repository: dessalines/lemmy-ui:0.17.3
+deployment:
+  replicaCount: 1
+  terminationGracePeriodSeconds: 10
+  env:
+    rust_backtrace: full
+deployment_ui:
+  replicaCount: 1
+  terminationGracePeriodSeconds: 10
+  env:
+    lemmy_ui_lemmy_external_host: lemmy.example.com
+    lemmy_ui_lemmy_internal_host: lemmy-service.lemmy.svc.cluster.local:8536
+    lemmy_https: true
+    lemmy_ui_debug: false
+service:
+  protocol: TCP
+  port: 8536
+service_ui:
+  protocol: TCP
+  port: 1234
+secret:
+  type: Opaque
+pvc:
+  storage: 1Gi
+  storageClassName: local
+ingress:
+  host: "lemmy.example.com"
+tls:
+  # ssl-cert-production / ssl-cert-staging
+  secretName: ssl-cert-staging
+  # letsencrypt-production / letsencrypt-staging
+  issuerName: letsencrypt-staging

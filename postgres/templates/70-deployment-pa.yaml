@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-pa
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.deployment_pa.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-pa
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-pa
+    spec:
+      containers:
+      - name: {{ .Release.Name }}-pa
+        image: {{ .Values.image_pa.repository }}
+        ports:
+        - containerPort: {{ .Values.deployment_pa.containerPort }}
+        env:
+          - name: PGADMIN_LISTEN_PORT
+            value: {{ .Values.deployment_pa.containerPort | quote }}
+          - name: PGADMIN_DEFAULT_EMAIL
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-secret
+                key: pgadmin-default-email
+          - name: PGADMIN_DEFAULT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-secret
+                key: pgadmin-default-password
+        volumeMounts:
+          - name: {{ .Release.Name }}-data
+            mountPath: /data
+      volumes:
+        - name: {{ .Release.Name }}-data
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-pa-pvc

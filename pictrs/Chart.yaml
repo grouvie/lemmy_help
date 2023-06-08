@@ -1,0 +1,4 @@
+apiVersion: v1
+description: Grouvies Kubernetes Pict-Rs Helm Chart
+name: pictrs
+version: 0.0.1

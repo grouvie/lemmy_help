@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-p
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-p
+  serviceName: {{ .Release.Name }}-service-p
+  replicas: {{ .Values.deployment_p.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-p
+    spec:
+      terminationGracePeriodSeconds: {{ .Values.deployment_p.terminationGracePeriodSeconds }}
+      containers:
+        - name: {{ .Release.Name }}-p
+          image: {{ .Values.image_p.repository }}
+          env:
+            - name: POSTGRES_USER
+              value: root
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-secret
+                  key: postgres-password
+            - name: PGDATA
+              value: /data/pgdata
+          ports:
+            - containerPort: {{ .Values.service_p.port }}
+              name: {{ .Release.Name }}-port
+          volumeMounts:
+              - name: {{ .Release.Name }}-data
+                mountPath: /data
+      volumes:
+        - name: {{ .Release.Name }}-data
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-p-pvc

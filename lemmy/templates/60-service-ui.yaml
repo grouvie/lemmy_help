@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-service-ui
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Release.Name }}-ui
+spec:
+  ports:
+    - port: {{ .Values.service_ui.port }}
+      name: {{ .Release.Name }}-port-ui
+  clusterIP: None
+  selector:
+    app: {{ .Release.Name }}-ui

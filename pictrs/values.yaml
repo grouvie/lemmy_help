@@ -1,0 +1,14 @@
+namespace: pictrs
+image:
+  repository: asonix/pictrs:0.4.0-rc.3
+deployment:
+  replicaCount: 1
+  terminationGracePeriodSeconds: 10
+service:
+  protocol: TCP
+  port: 8080
+secret:
+  type: Opaque
+pvc:
+  storage: 20Gi
+  storageClassName: local
