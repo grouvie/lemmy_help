@@ -12,7 +12,7 @@
 <p>You can then deploy postgres and pgAdmin using:</p>
 
 <code>kubectl apply -f ./postgres</code>
-<p>When postgres and pgAdmin are running, you can use pgAdmin to create a database, user, and password for lemmy. Login to pgAdmin and add your postgres instance in the UI.</p>
+<p>When postgres and pgAdmin are running, you can use pgAdmin to create a database, user, and password for Lemmy. Login to pgAdmin and add your postgres instance in the UI.</p>
 <p>The postgres connection string to add your instance in pgAdmin should be similar to this one:</p>
 <code>postgres-service-p.postgres.svc.cluster.local</code>
 <h2>Pict-Rs Setup:</h2>
@@ -25,7 +25,7 @@
 
 <code>kubectl apply -f ./pictrs</code>
 <h2>Lemmy Setup:</h2>
-<p>Configure the lemmy chart to use your configuration values:</p>
+<p>Configure the Lemmy chart to use your configuration values:</p>
 <ul>
   <li><a href="/lemmy/values.yaml">lemmy/values.yaml</a></li>
 </ul>
@@ -60,7 +60,7 @@
     }
 }
 ```
-<p>You can then copy the config.hjson file to the lemmy volume. For example, like this:</p>
+<p>You can then copy the config.hjson file to the Lemmy volume. For example, like this:</p>
 
 <code>kubectl cp -n lemmy config.hjson lemmy:/config</code>
 <p>If this does not work, you can set the deployment.replicaCount value to 0 in the <a href="/lemmy/values.yaml">values.yaml</a> and use a debugger pod to attach to the volume and copy the config file to the volume with it.</p>
