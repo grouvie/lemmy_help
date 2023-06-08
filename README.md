@@ -29,7 +29,7 @@
 <ul>
   <li><a href="/lemmy/values.yaml">lemmy/values.yaml</a></li>
 </ul>
-<p>You can then deploy lemmy using:</p>
+<p>You can then deploy Lemmy using:</p>
 
 <code>kubectl apply -f ./lemmy</code>
 <p>Lemmy requires a valid config.hjson file to run. You can download it from the releases <a href="https://github.com/LemmyNet/lemmy/releases">here</a>.</p>
