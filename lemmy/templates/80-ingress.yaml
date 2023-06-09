@@ -2,15 +2,24 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-ingress
-  namespace: {{ .Values.namespace }}
   annotations:
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      gzip on;
-      gzip_types text/css application/javascript image/svg+xml;
-      gzip_vary on;
+    nginx.ingress.kubernetes.io/server-snippet: |
       add_header X-Frame-Options SAMEORIGIN;
       add_header X-Content-Type-Options nosniff;
       add_header X-XSS-Protection "1; mode=block";
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header Host $host;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      if ($http_accept = "application/activity+json") {
+        proxy_pass http://lemmy-service.lemmy.svc.cluster.local:{{ .Values.service.port }};
+      }
+      if ($http_accept = "application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\"") {
+        proxy_pass http://lemmy-service.lemmy.svc.cluster.local:{{ .Values.service.port }};
+      }
+      if ($request_method = POST) {
+        proxy_pass http://lemmy-service.lemmy.svc.cluster.local:{{ .Values.service.port }};
+      }
 spec:
   tls:
     - secretName: {{ .Values.tls.secretName }}
