@@ -24,12 +24,16 @@ spec:
             - containerPort: {{ .Values.service.port }}
               name: {{ .Release.Name }}-port
           env:
-          - name: RUST_BACKTRACE
-            value: {{ .Values.deployment.env.rust_backtrace | quote }}
+            - name: RUST_BACKTRACE
+              value: {{ .Values.deployment.env.rust_backtrace | quote }}
           volumeMounts:
-          - name: {{ .Release.Name }}-data
-            mountPath: "/config"
+            - name: config-volume
+              mountPath: "/config/config.hjson"
+              subPath: config.hjson
       volumes:
-        - name: {{ .Release.Name }}-data
-          persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-pvc
+        - name: config-volume
+          configMap:
+            name: {{ .Release.Name }}-configmap
+            items:
+              - key: config.hjson
+                path: config.hjson

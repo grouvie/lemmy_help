@@ -24,79 +24,20 @@
 <p>You can then deploy pict-rs using:</p>
 
 <code>kubectl apply -f ./pictrs</code>
+
 <h2>Lemmy Setup:</h2>
-<p>Configure the Lemmy chart to use your configuration values:</p>
+
+<p>Lemmy requires a valid config.hjson file to run. You can download it from the releases <a href="https://github.com/LemmyNet/lemmy/releases">here</a>.</p>
+<p>Configure the Lemmy chart to use your configuration values. You can set the config.hjson values in the configmap:</p>
+
 <ul>
   <li><a href="/lemmy/values.yaml">lemmy/values.yaml</a></li>
+  <li><a href="/lemmy/templates/20-configmap.yaml">lemmy/templates/20-configmap.yaml</a></li>
 </ul>
+
 <p>You can then deploy Lemmy using:</p>
 
 <code>kubectl apply -f ./lemmy</code>
-<p>Lemmy requires a valid config.hjson file to run. You can download it from the releases <a href="https://github.com/LemmyNet/lemmy/releases">here</a>.</p>
-<p>Edit the values to fit your configuration. Example values:</p>
-
-```yaml
-{
-    setup: {
-    admin_username: "admin"
-    admin_password: "password"
-    site_name: "Lemmy Help"
-    }
-    hostname: "lemmy.example.com"
-    bind: "0.0.0.0"
-    port: 8536
-    tls_enabled: true
-    pictrs: {
-    url: "http://pictrs-service.pictrs.svc.cluster.local:8080/"
-    api_key: ""
-    }
-    database: {
-    database: "lemmy"
-    user: "lemmy"
-    password: "lemmy-password"
-    host: "postgres-service-p.postgres.svc.cluster.local"
-    port: 5432
-    pool_size: 5
-    }
-}
-```
-<p>You can then copy the config.hjson file to the Lemmy volume. For example, like this:</p>
-
-<code>kubectl cp -n lemmy config.hjson lemmy:/config</code>
-<p>If this does not work, you can set the deployment.replicaCount value to 0 in the <a href="/lemmy/values.yaml">values.yaml</a> and use a debugger pod to attach to the volume and copy the config file to the volume with it.</p>
-
-```yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: busybox
-  namespace: lemmy
-spec:
-  containers:
-  - image: busybox
-    command:
-      - sleep
-      - "3600"
-    imagePullPolicy: IfNotPresent
-    name: busybox
-    volumeMounts:
-    - name: busybox-data
-      mountPath: /data
-  volumes:
-    - name: busybox-data
-      persistentVolumeClaim:
-        claimName: lemmy-pvc
-  restartPolicy: Always
-```
-<p>The command to copy the config file to the volume is:</p>
-
-<pre><code>kubectl cp -n lemmy config.hjson busybox:/data</code></pre>
-
-<p>Once the file is successfully copied to the volume, you can delete the busybox debugger:</p>
-
-<pre><code>kubectl delete pod -n lemmy busybox</code></pre>
-
-<p>After restarting the Lemmy pod with the config file in the volume, it should launch successfully.</p>
 
 <p>Congratulations! You have successfully set up Lemmy on your cluster.</p>
 
